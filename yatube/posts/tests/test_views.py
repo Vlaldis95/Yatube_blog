@@ -51,11 +51,13 @@ class PostPagesTest(TestCase):
         cls.group.delete()
         cls.post.delete()
         cls.user.delete()
+        cls.user2.delete()
 
     def setUp(self):
         self.authorized_client = Client()
         self.authorized_client2 = Client()
-        self.authorized_client.force_login(PostPagesTest.user)
+        self.authorized_client.force_login(self.user)
+        self.authorized_client2.force_login(self.user2)
         cache.clear()
 
     def test_pages_on_templates(self):
@@ -194,6 +196,11 @@ class PostPaginatorTest(TestCase):
             [Post(author=cls.user, text='Тестовый пост',
                   group=cls.group) for _ in range(13)])
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.group.delete()
+        cls.user.delete()
+
     def setUp(self):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
@@ -243,6 +250,12 @@ class CommentTest(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.user.delete()
+        cls.group.delete()
+        cls.post.delete()
+
     def test_add_comment_for_guest(self):
         '''Неавторизованный пользователь не может оставить комментарий'''
         response = self.client.get(reverse('posts:add_comment',
@@ -288,6 +301,12 @@ class CacheViewsTest(TestCase):
             group=cls.group,
             author=cls.author
         )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.author.delete()
+        cls.group.delete()
+        cls.post.delete()
 
     def test_cache_index(self):
         """Проверка хранения и очищения кэша для index."""
