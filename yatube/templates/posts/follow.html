@@ -1,0 +1,35 @@
+{%extends 'base.html'%}
+{% load thumbnail %}
+    <title> {% block title %} Подписки пользователя {% endblock %} </title>
+    <main> 
+    {% block content %}
+    <div style= "margin-left: 20;padding-left: 20;"   >     
+        {% include 'posts/includes/switcher.html' %}
+    </div>
+      <div class="container py-5">     
+        <h2>Подписки пользователя {{user.username}} </h2>
+        <article>
+          {% for post in page_obj %}
+           <ul>
+             <li>
+               Автор: {{ post.author.get_full_name }}
+             </li>
+             <li>
+               Дата публикации: {{ post.pub_date|date:"d E Y" }}
+             </li>
+           </ul>
+          {% thumbnail post.image "960x339" crop="center" upscale=True as im %}
+           <img class="card-img my-2" src="{{ im.url }}">
+          {% endthumbnail %}
+          <p>{{ post.text }}</p>  
+            <a href= "{% url 'posts:post_detail' post.id %}"> Подробная информация </a>  <br>
+          {% if post.group %}   
+            <a href="{% url 'posts:group_list' post.group.slug %}">Все записи группы</a>
+          {% endif %} 
+          {% if not forloop.last %}<hr>{% endif %}
+        {% endfor %} 
+        </article>
+        {% include 'posts/includes/paginator.html' %}
+         </div>  
+    {% endblock %} 
+    </main>
