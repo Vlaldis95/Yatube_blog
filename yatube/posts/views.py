@@ -31,18 +31,13 @@ def profile(request, username):
     author = get_object_or_404(User, username=username)
     posts = author.posts.all()
     page_obj = paginate_posts(request, posts)
-    button = False
-    following = False
-    if request.user.is_authenticated and request.user != author:
-        button = True
-        if Follow.objects.filter(user=request.user, author=author).exists():
-            following = True
-    context = {
-        'author': author,
-        'page_obj': page_obj,
-        'following': following,
-        'button': button
-    }
+    if request.user.is_authenticated:
+        following = Follow.objects.filter(
+            user=request.user, author=author
+        ).exists()
+    else:
+        following = False
+    context = {'author': author, 'page_obj': page_obj, 'following': following}
     return render(request, 'posts/profile.html', context)
 
 
