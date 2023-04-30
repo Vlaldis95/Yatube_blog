@@ -31,12 +31,8 @@ def profile(request, username):
     author = get_object_or_404(User, username=username)
     posts = author.posts.all()
     page_obj = paginate_posts(request, posts)
-    if request.user.is_authenticated:
-        following = Follow.objects.filter(
-            user=request.user, author=author
-        ).exists()
-    else:
-        following = False
+    following = request.user.is_authenticated and Follow.objects.filter(
+        user=request.user, author=author).exists()
     context = {'author': author, 'page_obj': page_obj, 'following': following}
     return render(request, 'posts/profile.html', context)
 
@@ -99,7 +95,7 @@ def follow_index(request):
 
 @login_required
 def profile_follow(request, username):
-    author = User.objects.get(username=username)
+    author = get_object_or_404(User, username=username)
     if author != request.user:
         if Follow.objects.filter(author=author, user=request.user).exists():
             return redirect('posts:profile', username=username)
@@ -109,10 +105,12 @@ def profile_follow(request, username):
 
 @login_required
 def profile_unfollow(request, username):
-    author = User.objects.get(username=username)
-    if Follow.objects.filter(user=request.user, author=author).exists():
-        if author != request.user:
-            following = Follow.objects.get(author=author, user=request.user)
-            following.delete()
-            return redirect('posts:profile', username=username)
+    author = get_object_or_404(User, username=username)
+    if (
+            Follow.objects.filter(author=author, user=request.user).exists()
+            or request.user == author
+    ):
+        following = Follow.objects.get(author=author, user=request.user)
+        following.delete()
+        return redirect('posts:profile', username=username)
     return redirect('posts:profile', username=username)
