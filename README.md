@@ -1,3 +1,9 @@
-# hw05_final
+Окончательная версия социальной сети для блогеров
+-Прописаны модели
+-Сделана форма регистрации пользователей, добавлена возможность авторизации и восстановления доступа по e-mail
+-Добавлена возможность загрузки картинок к постам
+-Добавлены подписки и комментарии
+-Реализованы кастомные страницы ошибок
+-Проект полностью готов к деплою в продакшен
 
-[![CI](https://github.com/yandex-praktikum/hw05_final/actions/workflows/python-app.yml/badge.svg?branch=master)](https://github.com/yandex-praktikum/hw05_final/actions/workflows/python-app.yml)
+Стек: Python 3.9, Django, HTML и CSS, SQLite
